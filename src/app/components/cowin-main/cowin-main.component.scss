@@ -1,0 +1,62 @@
+.main-holder {
+  position: relative;
+  float: left;
+  .info-label {
+    font-weight: 500;
+    font-size: 12px;
+  }
+  .main-container {
+    .list-group-item {
+      span {
+        font-weight: bold;
+      }
+    }
+    .session-list {
+      overflow-y: auto;
+      max-height: 160px;
+    }
+    .form-holder {
+      position: relative;
+      left: 0;
+      top: 0;
+    }
+    .result-holder {
+      height: 100%;
+      .loader-container {
+        position: absolute;
+        left: 50%;
+        top:50%;
+        transform: translate(-50%, -50%);
+      }
+      .available-alert-holder {
+        padding: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .slot-result-holder {
+        min-height: 1px;
+        //overflow-y: auto;
+        .copy-container {
+          .copy-input {
+            display: inline-block;
+            background: transparent;
+            border: none;
+            padding: 0;
+            float: left;
+            width: auto;
+            max-width: 60px;
+          }
+          .copy-btn {
+
+          }
+        }
+      }
+    }
+  }
+  .cowin_footer {
+    left: 0;
+    bottom: 0;
+  }
+}
+
+

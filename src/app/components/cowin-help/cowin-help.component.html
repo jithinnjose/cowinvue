@@ -1,0 +1,29 @@
+<div class="details-model p-2 d-flex flex-column">
+  <div class="header card-shadow card flex-row p-2 mb-2 justify-content-between">
+    <div class="d-flex align-items-center justify-content-start fl-2">
+      <span (click)="backBtnClick()" class="text-primary back-btn me-1"><i class="fas fa-arrow-circle-left"></i></span>
+      <span class="text-primary text-start">CowinVue Help</span>
+    </div>
+  </div>
+  <div class="body p-0 h-100 card-shadow card home-placeholder-container d-flex
+  align-items-center justify-content-start mb-2 p-2">
+    <ul class="list-group">
+      <li class="border-0 list-group-item list-group-item-primary">The availability of the slots can be searched using Pincode or Districts. Multiple Pincodes (each Pincode separated by ",") and District can be selected while searching for slots</li>
+      <li class="border-0 list-group-item list-group-item-info">Select State, provide Pincodes/ select districts from the dropdown, and selected required filters from the available filter options. (Filters can be set before or after the search)</li>
+      <li class="border-0 list-group-item list-group-item-success">Click on "Start Search" button to initiate an auto search</li>
+      <li class="border-0 list-group-item list-group-item-primary">If slots are available in any selected Districts/ Pincodes, the same will be listed with an alert. Details of each slot can be viewed by clicking on the listed slot card</li>
+      <li class="border-0 list-group-item list-group-item-success">If no available slots are found, the search will be auto-triggered based on the selected interval. The default interval is 30 Seconds</li>
+      <li class="border-0 list-group-item list-group-item-info">The search can be cancelled by clicking on the "Cancel Search" button</li>
+      <li class="border-0 list-group-item list-group-item-danger">This app uses CoWin open API to make it easy for you to find slots. Availability changes in real-time. So book your slot ASAP</li>
+    </ul>
+    <span class="badge bg-warning feed-back text-dark text-center mt-3 w-100">For any feedback/suggestion mail to
+        <strong>support@cowin.help</strong></span>
+  </div>
+  <div class="py-1 h-100 card-shadow flex-row card d-flex
+  align-items-center justify-content-between fl-b-20px">
+    <span class="badge text-cowinvue-secondary text-start">www.cowin.help</span>
+    <a class="badge text-info text-start text-decoration-none"
+       href="mailto:support@cowin.help?cc=admin@nutrior.online"
+    >support@cowin.help</a>
+  </div>
+</div>

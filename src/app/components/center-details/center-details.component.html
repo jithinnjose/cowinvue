@@ -1,0 +1,66 @@
+<div class="details-model p-2 d-flex flex-column">
+  <div class="header card-shadow card flex-row p-2 mb-2 justify-content-between align-items-center">
+    <div class="d-flex align-items-center justify-content-start fl-2">
+      <span (click)="backBtnClick()" class="text-primary back-btn me-1"><i class="fas fa-arrow-circle-left"></i></span>
+      <span class="text-primary text-start">Center Detail</span>
+    </div>
+  </div>
+  <div class="card-shadow card flex-row p-2 mb-2 justify-content-between align-items-center">
+    <span class="badge bg-light text-dark text-start">Book now using</span>
+    <a href="https://selfregistration.cowin.gov.in" class="btn rounded-pill btn-sm btn-primary">www.cowin.gov.in</a>
+  </div>
+  <div class="body py-2 card-shadow card align-items-center mb-2">
+    <label class="center-name-label">{{selectedCenter.name}}</label>
+    <label class="total-slots">{{getTotlaSlotsInfo(selectedCenter.sessions[0].available_capacity)}}</label>
+    <div class="d-flex py-1 w-100 align-items-center justify-content-around">
+      <label class="dose-label first-dose-count">First Dose : {{selectedCenter.sessions[0].available_capacity_dose1}}</label>
+      <label class="dose-label second-dose-count">Second Dose : {{selectedCenter.sessions[0].available_capacity_dose2}}</label>
+    </div>
+    <hr class="w-100 mt-1 mb-1 border-left border-secondary">
+    <div class="d-flex w-100 py-1 px-2 align-items-stretch">
+      <span class="badge fl-1" [ngClass]="getColorClass(selectedCenter.fee_type)">{{selectedCenter.fee_type}}</span>
+      <span class="badge bg-primary fl-2 ms-2 me-2">{{selectedCenter.sessions[0].vaccine}}</span>
+      <span class="badge bg-warning fl-1">Age : {{selectedCenter.sessions[0].min_age_limit}}+</span>
+    </div>
+  </div>
+  <div class="bottom h-100 py-2 card-shadow card align-items-stretch mb-2">
+    <div class="px-2 address-holder d-flex justify-content-between align-items-center">
+      <label class="address-label">{{selectedCenter.address}}</label>
+      <span (click)="goToGmap()" class="g-map-link"></span>
+    </div>
+    <hr class="mt-1 mb-1 border-left border-secondary">
+    <table class="table table-borderless center-details-table">
+      <tbody>
+      <tr>
+        <td>State Name</td>
+        <td>{{selectedCenter.state_name}}</td>
+      </tr>
+      <tr>
+        <td>District Name</td>
+        <td>{{selectedCenter.district_name}}</td>
+      </tr>
+      <tr>
+        <td>Block Name</td>
+        <td>{{selectedCenter.block_name}}</td>
+      </tr>
+      <tr>
+        <td>Pincode</td>
+        <td>{{selectedCenter.pincode}}</td>
+      </tr>
+      <tr>
+        <td>Date</td>
+        <td>{{selectedCenter.sessions[0].date}}</td>
+      </tr>
+      <tr>
+        <td>Timings</td>
+        <td class="d-flex flex-column"><span *ngFor="let timeSlot of getTimeSlotList(selectedCenter.sessions[0].slots)">{{timeSlot}}</span></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="py-1 h-100 card-shadow flex-row card d-flex
+    align-items-center justify-content-between fl-b-20px">
+    <span class="badge text-cowinvue-secondary text-start">www.cowin.help</span>
+    <span class="badge text-cowinvue-secondary text-start">support@cowin.help</span>
+  </div>
+</div>

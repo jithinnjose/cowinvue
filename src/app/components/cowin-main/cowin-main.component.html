@@ -1,0 +1,161 @@
+<div class="cowin-vue-holder main-holder w-100 h-100">
+  <nav #nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a style="color: #0198E1" class="navbar-brand text-primary" href="#"><i class="fas fa-laptop-medical fa-1x"></i> CowinVue</a>
+      <span (click)="goToHelp()"><i class="help-btn text-primary fas fa-question-circle"></i></span>
+    </div>
+  </nav>
+  <div [style.height]="getMainHeight(nav, footer)" class="position-relative float-left main-container">
+    <div #formElm class="col-sm-12 offset-sm-0 col-md-9 offset-md-3 col-lg-8 offset-lg-4 col-xl-8 offset-xl-4  form-holder">
+      <form [formGroup]="myForm" (ngSubmit)="submit()">
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1">
+          <div>
+            <label class="info-label w-100 text-start find-by-label">Find Slots By</label>
+            <div class="w-100 btn-group btn-group-sm">
+              <button type="button" [ngClass]="{'btn-primary active': isPinSelected()}" class="btn btn-outline-primary"
+                      (click)="selectFindBy($event,searchByType.PIN)">PIN Code</button>
+              <button type="button" [ngClass]="{'btn-primary active': !isPinSelected()}" class="btn btn-outline-primary"
+                      (click)="selectFindBy($event,searchByType.DISTRICT)">District</button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedSearchBy === searchByType.PIN" class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1">
+          <input placeholder="Pin codes separated by ," type="text" class="form-control form-control-sm" formControlName="pincode" value="">
+          <div *ngIf="isValidated && pincode.errors?.required" class="alert alert-danger mt-2">
+            Please enter area PIN code
+          </div>
+          <div *ngIf="isValidated && pincode.errors?.min" class="alert alert-danger mt-2">
+            Please enter a valid area PIN code
+          </div>
+        </div>
+        <div *ngIf="selectedSearchBy === searchByType.DISTRICT" class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1">
+          <select class="custom-select form-select form-select-sm" formControlName="state" (change)="changeState($event)">
+            <option value="">Select State</option>
+            <option value={{st.state_id}} *ngFor="let st of stateList">
+              {{st.state_name}}
+            </option>
+          </select>
+          <div *ngIf="isValidated && state.errors?.required" class="alert alert-danger mt-2">
+            Please select State
+          </div>
+        </div>
+        <div *ngIf="selectedSearchBy === searchByType.DISTRICT" class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1">
+          <ng-multiselect-dropdown
+            [placeholder]="'Select districts'" formControlName="districts"
+            [settings]="dropdownSettings"
+            [data]="districtList">
+          </ng-multiselect-dropdown>
+          <div *ngIf="isValidated && districts.errors?.required && state.touched" class="alert alert-danger mt-2">
+            Please select District
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 d-flex align-items-center justify-content-between">
+          <div class="fl-1 d-flex flex-column">
+            <label class="info-label mb-1 mt-1">Age Group</label>
+            <div class="btn-group btn-group-sm w-100">
+              <input (change)="changeFilter()" type="radio" value="" class="btn-check" formControlName="ageLimit" id="ageLimit3" autocomplete="off" checked>
+              <label class="btn btn-outline-primary" for="ageLimit3">All</label>
+              <input (change)="changeFilter()" type="radio" value="18" class="btn-check" formControlName="ageLimit" id="ageLimit1" autocomplete="off">
+              <label class="btn btn-outline-primary" for="ageLimit1">18+</label>
+              <input (change)="changeFilter()" type="radio" value="45" class="btn-check" formControlName="ageLimit" id="ageLimit2" autocomplete="off">
+              <label class="btn btn-outline-primary" for="ageLimit2">45+</label>
+            </div>
+          </div>
+          <div class="ms-1 fl-1 d-flex flex-column">
+            <label class="info-label mb-1 mt-1">Dose Type</label>
+            <div class="btn-group btn-group-sm w-100">
+              <input (change)="changeFilter()" type="radio" value="" class="btn-check" formControlName="doseType" id="doseType3" autocomplete="off" checked>
+              <label class="btn btn-outline-primary" for="doseType3">All</label>
+              <input (change)="changeFilter()" type="radio" value="dose1" class="btn-check" formControlName="doseType" id="doseType1" autocomplete="off">
+              <label class="btn btn-outline-primary" for="doseType1">Dose 1</label>
+              <input (change)="changeFilter()" type="radio" value="dose2" class="btn-check" formControlName="doseType" id="doseType2" autocomplete="off">
+              <label class="btn btn-outline-primary" for="doseType2">Dose 2</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 d-flex flex-column">
+          <label class="info-label mb-1 mt-1">Vaccine Type</label>
+          <div class="align-self-auto btn-group btn-group-sm w-100" role="group">
+            <input (change)="handleVaccineSelection('allvaccine')" type="checkbox" value="" class="btn-check" formControlName="allvaccine" id="selectedVaccine1" autocomplete="off">
+            <label class="btn btn-sm btn-outline-primary" for="selectedVaccine1">All</label>
+
+            <input (change)="handleVaccineSelection('covaxin')" type="checkbox" value="COVAXIN" class="btn-check" formControlName="covaxin" id="selectedVaccine2" autocomplete="off">
+            <label class="btn btn-sm btn-outline-primary" for="selectedVaccine2">Covaxin</label>
+
+            <input (change)="handleVaccineSelection('covishield')" type="checkbox" value="COVISHIELD" class="btn-check" formControlName="covishield" id="selectedVaccine3" autocomplete="off">
+            <label class="btn btn-sm btn-outline-primary" for="selectedVaccine3">Covishield</label>
+            <input (change)="handleVaccineSelection('sputnikv')" type="checkbox" value="SPUTNIK V" class="btn-check" formControlName="sputnikv" id="selectedVaccine4" autocomplete="off">
+            <label class="btn btn-sm btn-outline-primary" for="selectedVaccine4">Sputnik V</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 d-flex flex-column">
+          <label class="info-label mb-1 mt-1">Vaccine Fee</label>
+          <div class="btn-group btn-group-sm w-100">
+            <input (change)="changeFilter()" type="radio" value="" class="btn-check" formControlName="feeType" id="feeType3" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="feeType3">All</label>
+            <input (change)="changeFilter()" type="radio" value="Free" class="btn-check" formControlName="feeType" id="feeType1" autocomplete="off">
+            <label class="btn btn-outline-primary" for="feeType1">Free</label>
+            <input (change)="changeFilter()" type="radio" value="paid" class="btn-check" formControlName="feeType" id="feeType2" autocomplete="off">
+            <label class="btn btn-outline-primary" for="feeType2">Paid</label>
+          </div>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 mt-2 d-flex">
+          <hr class="w-100 mt-2 mb-2 border-left border-secondary">
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 mt-2 d-flex flex-column">
+          <label class="info-label mb-1 mt-1">Search Interval</label>
+          <select class="custom-select form-select form-select-sm" formControlName="searchInterval" (change)="changeSearchInterval($event)">
+            <option value="">Search Interval</option>
+            <option value=15>
+              15 Second(s)
+            </option>
+            <option value=30>
+              30 Second(s)
+            </option>
+            <option value=45>
+              45 Second(s)
+            </option>
+            <option value=60>
+              1 Minute(s)
+            </option>
+            <option value=120>
+              2 Minute(s)
+            </option>
+            <option value=180>
+              3 Minute(s)
+            </option>
+            <option value=240>
+              4 Minute(s)
+            </option>
+            <option value=300>
+              5 Minute(s)
+            </option>
+          </select>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 mt-2 d-flex align-items-center justify-content-start">
+          <button type="submit" class="text-nowrap btn btn-sm btn-success fl-1"><i class="fab fa-searchengin"></i> Start Search</button>
+        </div>
+        <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6 m-1 mt-2 d-flex align-items-center justify-content-start">
+          <button type="button" (click)="stopSearch()" class="text-nowrap btn btn-sm btn-danger fl-1"><i class="far fa-stop-circle"></i> Cancel Search</button>
+          <button type="button" (click)="resetAll($event)" class="ms-1 text-nowrap btn btn-sm btn-primary fl-1"><i class="fas fa-sync"></i> Reset</button>
+        </div>
+
+      </form>
+    </div>
+    <div [style.height]="getResultHolderHeight(formElm)" class="col-12 p-1 result-holder d-flex flex-column position-relative">
+      <app-cowin-help *ngIf="showHelpView" (backBtnEvent)="closeHelpView()"></app-cowin-help>
+      <ng-container>
+        <div class="slot-result-holder position-relative h-100">
+          <app-slot-result #appResultRef *ngIf="showResultList" [isLoading]="loading" [timeOut]="timeOut"
+                           (muteAlert)="muteSound($event)" [isMuted]="isMuted"  (refreshSearchResult)="loadSlots()"
+                           (backEvFromResult)="onBackFromResultView()" (openCenterDetails)="onOpenCenterDetails()" [slotList]="slotList"></app-slot-result>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <footer #footer class="cowin_footer py-1 bg-light text-black-50 position-fixed w-100">
+    <div class="container-fluid d-flex align-items-center justify-content-center">
+      <small>Copyright &copy; {{copyrightYear}} www.cowin.help</small>
+    </div>
+  </footer>
+</div>
