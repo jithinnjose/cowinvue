@@ -57,6 +57,13 @@
     left: 0;
     bottom: 0;
   }
+  .calendar-holder{
+    top: calc(50% - 12px);
+    right: 10px;
+    height: 24px;
+    width: 24px;
+    pointer-events: none;
+  }
 }
 
 

@@ -21,39 +21,42 @@
   <div *ngIf="slotListForUi && slotListForUi.length" class="mb-2 p-2 text-center alert alert-success available-alert-holder" role="alert">
     {{this.getMessage()}}
   </div>
-  <div class="pb-2 card-shadow card row g-0 flex-row mb-2 h-100 result-cards-holder position-relative">
+  <div class="pb-2 px-1 pt-1 card-shadow card row g-0 flex-row mb-2 h-100 result-cards-holder position-relative">
     <div *ngIf="isLoading" class="w-100 h-100 loader-container d-flex align-items-center justify-content-center">
       <i style="color: #0198E1" class="fas fa-spinner text-primary fa-pulse fa-2x"></i>
     </div>
-    <div (click)="selectCenter($event,slt)" class="col-6 col-sm-4 col-md-3 col-lg-2 g-1" *ngFor="let slt of slotListForUi">
-      <div class="result-light-container d-flex flex-column">
-        <h6 class="center-name-h6">{{slt.name}}</h6>
-        <div class="d-flex align-items-center justify-content-between">
-          <span class="badge rounded-pill bg-primary">{{slt.sessions[0].min_age_limit}}+</span>
-          <span class="badge bg-info text-dark">{{slt.sessions[0].available_capacity}} Slots</span>
-          <span [ngClass]="getFeeTypeBgCls(slt.fee_type)" class="badge rounded-pill">{{slt.fee_type}}</span>
-        </div>
-        <hr class="mt-1 mb-1 border-top border-secondary">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex flex-column align-items-center">
-            <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose1)">Dose 1</span>
-            <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose1)">{{slt.sessions[0].available_capacity_dose1}}</span>
+
+    <virtual-scroller *ngIf="slotListForUi.length" #scroll [items]="slotListForUi">
+      <div (click)="selectCenter($event,slt)" class="v-scroll-item col-6 col-sm-4 col-md-3 col-lg-2 g-1" *ngFor="let slt of scroll.viewPortItems">
+        <div class="result-light-container d-flex flex-column">
+          <h6 class="center-name-h6">{{slt.name}}</h6>
+          <div class="d-flex align-items-center justify-content-between">
+            <span [ngClass]="getMinAgeLimitBgCls(slt.sessions[0].min_age_limit)" class="badge rounded-pill">{{slt.sessions[0].min_age_limit}}+</span>
+            <span class="badge bg-info text-dark">{{slt.sessions[0].available_capacity}} Slots</span>
+            <span [ngClass]="getFeeTypeBgCls(slt.fee_type)" class="badge rounded-pill">{{slt.fee_type}}</span>
           </div>
-          <hr class="vertical-divider mt-1 mb-1 border-left border-secondary">
-          <div class="d-flex flex-column align-items-center">
-            <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose2)">Dose 2</span>
-            <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose2)">{{slt.sessions[0].available_capacity_dose2}}</span>
+          <hr class="mt-1 mb-1 border-top border-secondary">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column align-items-center">
+              <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose1)">Dose 1</span>
+              <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose1)">{{slt.sessions[0].available_capacity_dose1}}</span>
+            </div>
+            <hr class="vertical-divider mt-1 mb-1 border-left border-secondary">
+            <div class="d-flex flex-column align-items-center">
+              <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose2)">Dose 2</span>
+              <span class="badge" [ngClass]="getClassForDose(slt.sessions[0].available_capacity_dose2)">{{slt.sessions[0].available_capacity_dose2}}</span>
+            </div>
           </div>
-        </div>
-        <hr class="mt-1 mb-1 border-top border-secondary">
-        <div class="d-flex justify-content-center align-items-center">
-          <label class="vaccine-name-label m-0">{{slt.sessions[0].vaccine}}</label>
+          <hr class="mt-1 mb-1 border-top border-secondary">
+          <div class="d-flex justify-content-center align-items-center">
+            <label class="vaccine-name-label m-0">{{slt.sessions[0].vaccine}}</label>
+          </div>
         </div>
       </div>
-    </div>
+    </virtual-scroller>
     <span *ngIf="!isLoading && (!slotListForUi || !slotListForUi.length) && (slotListBackup && slotListBackup.length)" class="p-2 text-center alert alert-danger no-slots-for-date-place-holder position-absolute">No slots are available in the selected date</span>
-    <div class="timer-alert d-flex flex-column align-items-center justify-content-center">
-      <span *ngIf="timeOut" class="alert alert-light text-success p-2 text-center" role="alert">
+    <div *ngIf="timeOut" class="timer-alert d-flex flex-column align-items-center justify-content-center">
+      <span class="alert alert-light text-success p-2 text-center" role="alert">
       Next search will trigger in {{timeOut}}
     </span>
       <span *ngIf="!isLoading && (!slotListBackup || !slotListBackup.length)" class="alert alert-warning p-2 text-center" role="alert">

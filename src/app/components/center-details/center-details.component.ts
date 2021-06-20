@@ -17,6 +17,9 @@ export class CenterDetailsComponent implements OnInit {
   getColorClass(feeType: string) {
     return feeType === 'Free' ? 'bg-success':'bg-danger';
   }
+  getMinAgeLimitBgCls(minAge: number) {
+    return minAge === 18 ? 'bg-danger': 'bg-warning text-dark';
+  }
   getTimeSlotList(slotTimeList: Array<string>) {
     return slotTimeList && slotTimeList.length ? slotTimeList.map(slot=>slot.trim()
       .replace('-',' to ')):[];

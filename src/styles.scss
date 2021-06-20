@@ -65,7 +65,7 @@ ng-multiselect-dropdown {
   }
 }
 .cowin-vue-holder {
-  .btn {
+  .btn, .form-control, .form-select {
     box-shadow: none !important;
   }
 }
@@ -104,7 +104,7 @@ ng-multiselect-dropdown {
     }
   }
   .dose-label {
-    font-weight: 500;
+    font-weight: 600;
     color: #f76905;
   }
 }
@@ -135,3 +135,45 @@ ng-multiselect-dropdown {
 .alert {
   font-size: 0.75rem !important;
 }
+
+.cowin-datepicker .cowin-dp-input{
+  background-color: #FFFFFF !important;
+}
+.cowin-datepicker {
+  .calendar-container {
+    border: 1px solid #86b7fe !important;
+    .day-unit, .year-unit {
+      background-color: #FFFFFF;
+      color: #212529;
+      &.is-today {
+        background-color: #0d6efd8a !important;
+        color: black !important;
+      }
+      &:hover, &.is-selected {
+        background-color: #0d6efd !important;
+        color: #FFFFFF !important;
+      }
+    }
+  }
+}
+
+ng-multiselect-dropdown .multiselect-dropdown .dropdown-btn, .cowin-dp-input {
+  //padding-left: 0.75rem !important;
+}
+
+virtual-scroller {
+  width: 100%;
+  height: 100%;
+  .scrollable-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .v-scroll-item {
+      display: flex;
+      flex-direction: column;
+      padding: 0.25rem !important;
+    }
+  }
+}
+
+

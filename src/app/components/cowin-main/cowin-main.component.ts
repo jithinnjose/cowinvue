@@ -6,6 +6,8 @@ import {AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validat
 import {CenterModel} from '../../model/center.model';
 import {CowinService} from '../../../services/cowin.service';
 import {MessagingService} from '../../../services/messaging.service';
+import {DatepickerOptions} from 'ng2-datepicker';
+import * as dateFn from 'date-fns';
 
 @Component({
   selector: 'app-cowin-main',
@@ -18,6 +20,7 @@ export class CowinMainComponent implements OnInit, OnDestroy{
   showHelpView = false;
   showResultList = false;
   dropdownSettings:IDropdownSettings = {};
+  datePickerOptions: DatepickerOptions;
   selectedDateString: string = null;
   get selectedSearchBy(): SearchByType {
     return this._selectedSearchBy;
@@ -90,6 +93,10 @@ export class CowinMainComponent implements OnInit, OnDestroy{
     return this.myForm.get('districts');
   }
 
+  get date() {
+    return this.myForm.get('date');
+  }
+
   get searchInterval() {
     return this.myForm.get('searchInterval');
   }
@@ -143,6 +150,21 @@ export class CowinMainComponent implements OnInit, OnDestroy{
       allowSearchFilter: true,
       noDataAvailablePlaceholderText:'Select State to load districts'
     };
+    this.datePickerOptions = {
+      minDate: new Date(new Date().setDate(new Date().getDate() - 1)),
+      maxDate: dateFn.endOfYear(new Date()),
+      minYear: dateFn.getYear(new Date()), // minimum available and selectable year
+      maxYear: dateFn.getYear(new Date()), // maximum available and selectable year
+      placeholder: '', // placeholder in case date model is null | undefined, example: 'Please pick a date'
+      format: 'dd LLLL YYY',
+      formatTitle: 'LLLL yyyy',
+      formatDays: 'EEEEE',
+      firstCalendarDay: 0, // 0 - Sunday, 1 - Monday
+      position: 'bottom',
+      inputClass: 'form-control form-control-sm w-100 cowin-dp-input',
+      calendarClass: 'datepicker-default cowin-datepicker w-100',
+      scrollBarColor: '#dfe3e9'
+    };
   }
 
   initializeForm() {
@@ -150,6 +172,7 @@ export class CowinMainComponent implements OnInit, OnDestroy{
       state: ['', [Validators.required]],
       pincode: ['', [Validators.required,Validators.min(6)]],
       districts: [[], Validators.required],
+      date: [new Date(), !Validators.required],
       allvaccine: [true, !Validators.required],
       covaxin: [false, !Validators.required],
       covishield: [false, !Validators.required],
@@ -309,6 +332,8 @@ export class CowinMainComponent implements OnInit, OnDestroy{
     this.clearAllTimeouts();
     this.unSubscribeAll();
 
+    let selectedDate = this.date.value;
+
     let selectedDistricts = this.districts.value.map(val=>val.district_id);
 
     let selectedPinCodes = this.pincode && this.pincode.value?this.pincode.value.split(',').map(pincodeString=> {
@@ -317,7 +342,7 @@ export class CowinMainComponent implements OnInit, OnDestroy{
     }): [];
     await this.sleep(500);
     if(this.selectedSearchBy === SearchByType.DISTRICT) {
-      this.subscriptions.push(this.service.getAllSlots(selectedDistricts).subscribe((data:any)=>{
+      this.subscriptions.push(this.service.getAllSlots(selectedDistricts,selectedDate).subscribe((data:any)=>{
         this.slotList = data && data.length ? [...data.map(dt=>dt)]: [];
         this.slotBackup = [...this.slotList];
         this.processFilter();
@@ -325,8 +350,8 @@ export class CowinMainComponent implements OnInit, OnDestroy{
           if(this.slotList && this.slotList.length) {
             this.messagingService.sendMessage({title:'Vaccination centers are available',
               message:this.appResultRef.getMessage()});
-            this.messagingService.sendMessage({title:'Vaccination centers are available',
-              message:this.appResultRef.getMessage()},false);
+            // this.messagingService.sendMessage({title:'Vaccination centers are available',
+            //   message:this.appResultRef.getMessage()},false);
           }
         });
         this.loading = false;
@@ -339,7 +364,7 @@ export class CowinMainComponent implements OnInit, OnDestroy{
         this.clearAndRestartSearch();
       }));
     } else {
-      this.subscriptions.push(this.service.getAllSlotsByPin(selectedPinCodes).subscribe((data:any)=>{
+      this.subscriptions.push(this.service.getAllSlotsByPin(selectedPinCodes, selectedDate).subscribe((data:any)=>{
         this.slotList = data && data.length ? [...data.map(dt=>dt)]: [];
         this.slotBackup = [...this.slotList];
         this.processFilter();
@@ -347,8 +372,8 @@ export class CowinMainComponent implements OnInit, OnDestroy{
           if(this.slotList && this.slotList.length) {
             this.messagingService.sendMessage({title:'Vaccination centers are available',
               message:this.appResultRef.getMessage()});
-            this.messagingService.sendMessage({title:'Vaccination centers are available',
-              message:this.appResultRef.getMessage()},false);
+            // this.messagingService.sendMessage({title:'Vaccination centers are available',
+            //   message:this.appResultRef.getMessage()},false);
           }
         });
         this.loading = false;
@@ -473,6 +498,7 @@ export class CowinMainComponent implements OnInit, OnDestroy{
   }
   onBackFromResultView() {
     this.showResultList = false;
+    this.stopSearch();
   }
   private sleep(msec: number) {
     return new Promise((resolve) => setTimeout(resolve, msec));

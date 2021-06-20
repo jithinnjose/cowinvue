@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {CenterModel} from '../../model/center.model';
 
 @Component({
@@ -7,6 +7,15 @@ import {CenterModel} from '../../model/center.model';
   styleUrls: ['./slot-result.component.scss']
 })
 export class SlotResultComponent implements OnInit {
+  get userSelectedDate(): Date {
+    return this._userSelectedDate;
+  }
+
+  @Input()
+  set userSelectedDate(value: Date) {
+    this._userSelectedDate = value;
+    this.createDateList();
+  }
   get slotListForUi(): Array<CenterModel> {
     return this._slotListForUi;
   }
@@ -16,6 +25,9 @@ export class SlotResultComponent implements OnInit {
     if(value && value.length) {
       this.totalVaccineDose = this.getTotalSlots(value);
     }
+    setTimeout(()=>{
+      this.el.nativeElement.getElementsByClassName('selfScroll')[0].scrollTop = 2;
+    });
   }
   slotListBackup:Array<CenterModel> = [];
   @Input() isMuted:boolean;
@@ -35,6 +47,7 @@ export class SlotResultComponent implements OnInit {
   @Output() muteAlert: EventEmitter<any> = new EventEmitter<any>();
   availableDateList: Array<{date: string,dateString:string, month: string}> = [];
   selectedDate: string;
+  private _userSelectedDate: Date;
   selectedCenter: CenterModel;
   showCenterDetail = false;
   @Output() dateFilterChange: EventEmitter<string> = new EventEmitter<string>();
@@ -56,10 +69,10 @@ export class SlotResultComponent implements OnInit {
   set totalVaccineDose(value) {
     this._totalVaccineDose = value;
   }
-  constructor() { }
+  constructor(private el:ElementRef) { }
 
   ngOnInit(): void {
-    this.createDateList();
+    // this.createDateList();
   }
   handleSlotValueChange() {
     if(this.slotList && this.slotList.length) {
@@ -74,19 +87,21 @@ export class SlotResultComponent implements OnInit {
   createDateList() {
     this.availableDateList = [];
     let listLength = 7;
-    let dateNow = new Date();
+    let dateNow = this.userSelectedDate || new Date();
     let fullYear = dateNow.getFullYear();
     let month = ("0" + (dateNow.getMonth() + 1)).slice(-2);
     let dateDigit = ("0" + dateNow.getDate()).slice(-2);
     let date = `${dateDigit}-${month}-${fullYear}`;
-    let monthString = dateNow.toLocaleString('default', { month: 'short' });
     for(let i=0; i<listLength; i++) {
-      let calculatedDate = (Number(dateDigit) + i).toString();
-      let calculatedDateString = `${Number(dateDigit) + i}-${month}-${fullYear}`;
+      let displayDateObj = this.getDateFromDateObj(dateNow,i);
+      let calculatedDate = ("0" + displayDateObj.getDate()).slice(-2);//(Number(dateDigit) + i).toString();
+      let calculatedMonth = ("0" + (displayDateObj.getMonth() + 1)).slice(-2);
+      let calculatedMonthString = displayDateObj.toLocaleString('default', { month: 'short' });
+      let calculatedDateString = `${calculatedDate}-${calculatedMonth}-${fullYear}`;
       this.availableDateList.push({
         dateString: calculatedDateString,
         date: calculatedDate,
-        month: monthString
+        month: calculatedMonthString
       });
     }
     this.selectedDate = date;
@@ -101,7 +116,13 @@ export class SlotResultComponent implements OnInit {
     let slotList = refSlotList.reduce((filtered, slot)=>{
       slot.sessions = slot.sessions.filter(dt=>dt.date === this.selectedDate);
       if(slot.sessions && slot.sessions.length) {
-        filtered = [...filtered, slot];
+        if(slot.sessions.length > 1) {
+          slot.sessions.forEach((ses, index)=>{
+            let slotCopy = Object.assign({},slot);
+            slotCopy.sessions = [ses];
+            filtered = [...filtered, slotCopy];
+          });
+        } else   filtered = [...filtered, slot];
       }
       return filtered;
     },[]);
@@ -128,7 +149,10 @@ export class SlotResultComponent implements OnInit {
     return `${this.slotListForUi.length} ${slotMsg} available with ${this.totalVaccineDose} dose of ${doseMsg}`;
   }
   getFeeTypeBgCls(feeType: string) {
-    return feeType === 'Free' ? 'bg-success': 'bg-warning text-dark';
+    return feeType === 'Free' ? 'bg-success': 'bg-danger';
+  }
+  getMinAgeLimitBgCls(minAge: number) {
+    return minAge === 18 ? 'bg-danger': 'bg-warning text-dark';
   }
   getClassForDose(availableDose:number) {
     if(availableDose <= 5) return 'text-danger';
@@ -160,6 +184,12 @@ export class SlotResultComponent implements OnInit {
   }
   muteSound(e) {
     this.muteAlert.emit(e);
+  }
+
+  getDateFromDateObj(dateObj, numDays) {
+    let refDate = new Date(dateObj);
+    refDate.setDate(refDate.getDate() + numDays);
+    return refDate;
   }
 
 }

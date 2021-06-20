@@ -3,6 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {map} from 'rxjs/operators';
 import {forkJoin} from 'rxjs';
 import set = Reflect.set;
+import {CenterModel} from '../app/model/center.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,8 @@ export class CowinService {
     return this.http.get(`${this.baseUri}/admin/location/districts/${state_id}`);
   }
 
-  getAllSlots(selectedDistricts:Array<string>) {
-    let dateNow= new Date();
+  getAllSlots(selectedDistricts:Array<string>, selectedDate: Date) {
+    let dateNow= selectedDate || new Date();
     let fullYear = dateNow.getFullYear();
     let month = ("0" + (dateNow.getMonth() + 1)).slice(-2);
     let dateDigit = ("0" + dateNow.getDate()).slice(-2);
@@ -43,11 +44,11 @@ export class CowinService {
           centersWithAvailableSlots = [...centersWithAvailableSlots,...centersWithSlots];
         });
       }
-      return centersWithAvailableSlots;
+      return this.sortList(centersWithAvailableSlots);
     }));
   }
-  getAllSlotsByPin(selectedPins:Array<string>) {
-    let dateNow= new Date();
+  getAllSlotsByPin(selectedPins:Array<string>,selectedDate: Date) {
+    let dateNow= selectedDate || new Date();
     let fullYear = dateNow.getFullYear();
     let month = ("0" + (dateNow.getMonth() + 1)).slice(-2);
     let dateDigit = ("0" + dateNow.getDate()).slice(-2);
@@ -68,7 +69,21 @@ export class CowinService {
           centersWithAvailableSlots = [...centersWithAvailableSlots,...centersWithSlots];
         });
       }
-      return centersWithAvailableSlots;
+      return this.sortList(centersWithAvailableSlots);
     }));
+  }
+
+  sortList(slotList:CenterModel[]) {
+    let initialSorted = slotList.map((slot)=>{
+      slot.sessions.sort((a,b)=>{
+        return this.getTimeFromDateString(a.date) - this.getTimeFromDateString(b.date);
+      });
+    });
+    initialSorted.sort((sl1:any,sl2:any)=>this.getTimeFromDateString(sl1.sessions[0].date) - this.getTimeFromDateString(sl2.sessions[0].date));
+    return slotList;
+  }
+  getTimeFromDateString(dateString: string) {
+    let datePart = dateString.split('-');
+    return new Date(`${datePart[1]},${datePart[0]},${datePart[2]}`).getTime();
   }
 }
