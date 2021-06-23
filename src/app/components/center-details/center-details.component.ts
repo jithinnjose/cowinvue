@@ -28,8 +28,27 @@ export class CenterDetailsComponent implements OnInit {
     return totalSlots > 1 ? `${totalSlots} slots available`:`${totalSlots} slot available`;
   }
   goToGmap() {
-    let lat = this.selectedCenter.lat;
-    let lon = this.selectedCenter.long;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(this.loadGmap.bind(this),this.handleErr.bind(this));
+    } else {
+      this.loadGmap(null);
+    }
+  }
+  loadGmap(position) {
+    let origin = '';
+    if(position){
+      origin = `${position.coords.latitude},${position.coords.longitude}`;
+    }
+    let name = this.selectedCenter.name;
+    let address = this.selectedCenter.address;
+    let district = this.selectedCenter.district_name;
+    let state = this.selectedCenter.state_name;
+    let gmapUri = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${name} ${address} ${ district} ${ state} &dir_action=navigate&travelmode=driving`;
+    let urlEncoded = encodeURI(gmapUri);
+    window.open(urlEncoded,'_blank');
+  }
+  handleErr(err) {
+    this.loadGmap(null);
   }
   backBtnClick() {
     this.backBtnEvent.emit();

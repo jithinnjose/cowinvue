@@ -86,7 +86,8 @@ ng-multiselect-dropdown {
     width: 30px;
     height: 30px;
     background: url(https://developers.google.com/maps/images/maps-icon.svg) center no-repeat;
-    background-size: cover
+    background-size: cover;
+    cursor: pointer;
   }
   .center-name-label {
     color: #065ba3 !important;
