@@ -1,0 +1,6 @@
+{
+	"appId": "in.cowin.android",
+	"appName": "CowinVue",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
