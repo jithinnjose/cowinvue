@@ -13,6 +13,7 @@ import {
   Token,
 } from '@capacitor/push-notifications';
 import { Dialog } from '@capacitor/dialog';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
