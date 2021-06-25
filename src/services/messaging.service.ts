@@ -55,7 +55,7 @@ export class MessagingService {
         title: `${msgObject.title}`,
         body: `${msgObject.message}`
       },
-      to : `${sessionStorage.getItem('messageToken')}`
+      to : `${sessionStorage.getItem('fcm-token')}`
     };
 
     return this.http

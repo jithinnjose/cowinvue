@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "863606037068",
+    "project_id": "cowinvue",
+    "storage_bucket": "cowinvue.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863606037068:android:94697717af36f0507e72e9",
+        "android_client_info": {
+          "package_name": "in.cowin.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863606037068-b24rt0bhqd5ehqigv4oc1quj0tngd7ac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1oIr9RWzg7AzzLX9LvAKLdhokcG3X36Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863606037068-b24rt0bhqd5ehqigv4oc1quj0tngd7ac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CenterModel} from '../../model/center.model';
-
+import { Geolocation } from '@capacitor/geolocation';
 @Component({
   selector: 'app-center-details',
   templateUrl: './center-details.component.html',
@@ -27,9 +27,10 @@ export class CenterDetailsComponent implements OnInit {
   getTotlaSlotsInfo(totalSlots: number) {
     return totalSlots > 1 ? `${totalSlots} slots available`:`${totalSlots} slot available`;
   }
-  goToGmap() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this.loadGmap.bind(this),this.handleErr.bind(this));
+  async goToGmap() {
+    const coordinates = await Geolocation.getCurrentPosition();
+    if (coordinates) {
+      this.loadGmap(coordinates);
     } else {
       this.loadGmap(null);
     }
