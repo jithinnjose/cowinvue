@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
     PushNotifications.addListener(
       'pushNotificationReceived',
       (notification: PushNotificationSchema) => {
-        this.notificationReceived = notification;
         const showAlert = async () => {
           await Dialog.alert({
             title: notification.title,
@@ -67,14 +66,14 @@ export class AppComponent implements OnInit {
 
     PushNotifications.addListener(
       'pushNotificationActionPerformed',
-      (notification: ActionPerformed) => {
-        const showAlert = async () => {
-          await Dialog.alert({
-            title: this.notificationReceived.title,
-            message: this.notificationReceived.body,
-          });
-        };
-        showAlert();
+      (action: ActionPerformed) => {
+        // const showAlert = async () => {
+        //   await Dialog.alert({
+        //     title: action?.notification?.title,
+        //     message: action?.notification?.body,
+        //   });
+        // };
+        // showAlert();
       },
     );
   }

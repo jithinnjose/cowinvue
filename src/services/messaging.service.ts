@@ -53,7 +53,8 @@ export class MessagingService {
     const body = {
       notification: {
         title: `${msgObject.title}`,
-        body: `${msgObject.message}`
+        body: `${msgObject.message}`,
+        image:"https://www.cowin.help/assets/images/cowin-badge.png"
       },
       to : `${sessionStorage.getItem('fcm-token')}`
     };

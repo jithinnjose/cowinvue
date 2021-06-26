@@ -8,6 +8,7 @@ import {CowinService} from '../../../services/cowin.service';
 import {MessagingService} from '../../../services/messaging.service';
 import {DatepickerOptions} from 'ng2-datepicker';
 import * as dateFn from 'date-fns';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 @Component({
   selector: 'app-cowin-main',
@@ -136,7 +137,10 @@ export class CowinMainComponent implements OnInit, OnDestroy{
     return new Date().getFullYear();
   }
 
-  ngOnInit() {this.getStateList();
+  async ngOnInit() {this.getStateList();
+
+    await LocalNotifications.requestPermissions();
+
     this.messagingService.requestPermission();
     this.messagingService.receiveMessage();
     this.message = this.messagingService.currentMessage;
@@ -348,8 +352,9 @@ export class CowinMainComponent implements OnInit, OnDestroy{
         this.processFilter();
         setTimeout(()=>{
           if(this.slotList && this.slotList.length) {
-            this.messagingService.sendMessage({title:'Vaccination centers are available',
-              message:this.appResultRef.getMessage()});
+            this.sendLocalNotification();
+            // this.messagingService.sendMessage({title:'Vaccination centers are available',
+            //   message:this.appResultRef.getMessage()});
             // this.messagingService.sendMessage({title:'Vaccination centers are available',
             //   message:this.appResultRef.getMessage()},false);
           }
@@ -370,8 +375,9 @@ export class CowinMainComponent implements OnInit, OnDestroy{
         this.processFilter();
         setTimeout(()=>{
           if(this.slotList && this.slotList.length) {
-            this.messagingService.sendMessage({title:'Vaccination centers are available',
-              message:this.appResultRef.getMessage()});
+            this.sendLocalNotification();
+            // this.messagingService.sendMessage({title:'Vaccination centers are available',
+            //   message:this.appResultRef.getMessage()});
             // this.messagingService.sendMessage({title:'Vaccination centers are available',
             //   message:this.appResultRef.getMessage()},false);
           }
@@ -500,6 +506,22 @@ export class CowinMainComponent implements OnInit, OnDestroy{
     this.showResultList = false;
     this.stopSearch();
   }
+
+
+  sendLocalNotification() {
+    LocalNotifications.schedule({
+        notifications: [{
+          id:new Date().getMilliseconds(),
+          title:'Vaccination centers are available',
+          body:this.appResultRef.getMessage(),
+          largeBody: this.appResultRef.getMessage(),
+          smallIcon:'ic_stat',
+          iconColor:'#0198e1',
+          largeIcon: 'ic_logo'
+        }]
+    });
+  }
+
   private sleep(msec: number) {
     return new Promise((resolve) => setTimeout(resolve, msec));
   }
